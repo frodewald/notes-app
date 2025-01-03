@@ -50,8 +50,8 @@ class NotesInputForm extends React.Component {
   render() {
     return (
       <form className='note-input-form' onSubmit={this.onSubmitEventHandler}>
-        <input type="text" placeholder='Judul' value={this.state.title} onChange={this.onTitleChangeEventHandler}/>
-        <textarea type="text" placeholder='Isi' value={this.state.body} onChange={this.onBodyChangeEventHandler} />
+        <input type="text" placeholder='Judul' value={this.state.title} onChange={this.onTitleChangeEventHandler} required/>
+        <textarea type="text" placeholder='Isi' value={this.state.body} onChange={this.onBodyChangeEventHandler} required/>
         <button type="submit" disabled={this.state.isLoading}>
           {this.state.isLoading ? (
             <span className="loading-icon">Menambahkan...</span>

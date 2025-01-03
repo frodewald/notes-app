@@ -64,6 +64,10 @@ class NotesApp extends React.Component {
   }
 
   async onAddNotesHandler({ title, body }) {
+    if (!title.trim() || !body.trim()) {
+      alert("Title dan Body tidak boleh kosong.");
+      return;
+    }
     try {
       const newNote = {
         _type: 'notes-post',
