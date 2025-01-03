@@ -14,6 +14,8 @@ class NotesApp extends React.Component {
       activeNotes: [],
       archivedNotes: [],
       search: "",
+      isArchiveLoadingId: null,
+      isDeleteLoadingId: null
     };
 
     this.onAddNotesHandler = this.onAddNotesHandler.bind(this);
@@ -81,17 +83,21 @@ class NotesApp extends React.Component {
 
   async onDeleteHandler(id) {
     try {
+      this.setState({ isDeleteLoadingId: id });
       await writeClient.delete(id);
       this.setState((prevState) => ({
         allNotes: prevState.allNotes.filter(note => note._id !== id),
+        isDeleteLoadingId: null,
       }));
     } catch (error) {
       console.error('Error deleting note:', error);
+      this.setState({ isDeleteLoadingId: null });
     }
   }
 
   async onArchiveHandler(id) {
     try {
+      this.setState({ isArchiveLoadingId: id });
       const noteToUpdate = this.state.allNotes.find(note => note._id === id);
       const updatedNote = await writeClient
         .patch(id)
@@ -99,10 +105,12 @@ class NotesApp extends React.Component {
         .commit();
       this.setState((prevState) => ({
         allNotes: prevState.allNotes.map(note =>
-          note._id === id ? updatedNote : note
+          note._id === id ? updatedNote : note,
         ),
+        isArchiveLoadingId: null,
       }));
     } catch (error) {
+      this.setState({ isArchiveLoadingId: null });
       console.error('Error archiving note:', error);
     }
   }
@@ -121,6 +129,8 @@ class NotesApp extends React.Component {
           archivedNotes={this.state.archivedNotes}
           onDelete={this.onDeleteHandler}
           onArchive={this.onArchiveHandler}
+          isArchiveLoadingId={this.state.isArchiveLoadingId}
+          isDeleteLoadingId={this.state.isDeleteLoadingId}
         />
       </div>
     );

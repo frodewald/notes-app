@@ -7,6 +7,7 @@ class NotesInputForm extends React.Component {
     this.state = {
       title: "",
       body: "",
+      isLoading: false
     }
 
     this.onTitleChangeEventHandler = this.onTitleChangeEventHandler.bind(this);
@@ -30,12 +31,20 @@ class NotesInputForm extends React.Component {
     });
   }
 
-  onSubmitEventHandler(event) {
+  async onSubmitEventHandler(event) {
     event.preventDefault();
-    this.props.addNotes(this.state);
-    this.props.onTitleLengthChange(0);
 
-    this.setState({ title: "", body: "" });
+    this.setState({ isLoading: true });
+
+    await this.props.addNotes(this.state);
+
+    this.setState({
+      title: "",
+      body: "",
+      isLoading: false,
+    });
+
+    this.props.onTitleLengthChange(0);
   }
 
   render() {
@@ -43,7 +52,13 @@ class NotesInputForm extends React.Component {
       <form className='note-input-form' onSubmit={this.onSubmitEventHandler}>
         <input type="text" placeholder='Judul' value={this.state.title} onChange={this.onTitleChangeEventHandler}/>
         <textarea type="text" placeholder='Isi' value={this.state.body} onChange={this.onBodyChangeEventHandler} />
-        <button type="submit">Tambah Catatan</button>
+        <button type="submit" disabled={this.state.isLoading}>
+          {this.state.isLoading ? (
+            <span className="loading-icon">Menambahkan...</span>
+          ) : (
+            "Tambah Catatan"
+          )}
+        </button>
       </form>
     )
   }
